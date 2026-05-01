@@ -4,3 +4,4 @@
 
 [Script]
 ai-health-autoselect = type=cron,cronexp="*/10 * * * *",timeout=90,script-path=https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@6aadc3a/ai-health-autoselect.js
+ai-health-autoselect-manual = type=generic,timeout=90,script-path=https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@6aadc3a/ai-health-autoselect.js
