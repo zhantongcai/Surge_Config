@@ -5,7 +5,8 @@ Surge 配置模板与 AI 节点自动优选模块。
 ## 文件说明
 
 - `Steve_WgetCloud_AI_Smart.conf`：已脱敏的 Surge 配置模板。使用前请把 `输入你的订阅链接` 替换成自己的订阅链接。
-- `AI-Health-AutoSelect.sgmodule`：Surge 模块入口。
+- `AI-Health-AutoSelect.sgmodule`：Surge Mac 模块入口。
+- `AI-Health-AutoSelect-iOS.sgmodule`：Surge iOS 专用模块入口。
 - `ai-health-autoselect.js`：模块使用的定时检测脚本。
 
 ## 模块版本
@@ -14,9 +15,9 @@ Surge 配置模板与 AI 节点自动优选模块。
 - 适用目标：单一 `AI` 策略组
 - 检测标准：以 ChatGPT / OpenAI 网页可用性为准
 
-## 导入地址
+## 导入地址 Mac
 
-在 Surge 的模块页面中选择“从 URL 安装模块”，填入：
+在 Surge Mac 的模块页面中选择“从 URL 安装模块”，填入：
 
 ```text
 https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect.sgmodule
@@ -28,10 +29,20 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect.s
 https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@e702dbd/AI-Health-AutoSelect.sgmodule
 ```
 
+## 导入地址 iOS
+
+在 Surge iOS 的模块页面中选择“从 URL 安装模块”，填入：
+
+```text
+https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect-iOS.sgmodule
+```
+
+iOS 固定版本地址会在每次发布后更新。若 `main` 地址安装成功，日常使用优先用 `main` 即可。
+
 模块会加载脚本：
 
 ```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
+https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@44c7acc/ai-health-autoselect.js
 ```
 
 ## 使用步骤
@@ -42,6 +53,15 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.j
 4. 在 Surge 中安装 `AI-Health-AutoSelect.sgmodule`。
 5. 启用模块并应用配置。
 6. 脚本会每 10 分钟自动检测并切换 `AI` 组的最优节点。
+
+### iOS 使用步骤
+
+1. 先在 iOS Surge 中导入并启用 `Steve_WgetCloud_AI_Smart.conf`。
+2. 将配置中的 `输入你的订阅链接` 替换为自己的订阅链接，或使用你已经在 Mac 上验证过的个人配置。
+3. 确认策略组里存在名为 `AI` 的 `select` 组，且里面能看到候选节点。
+4. 从 URL 安装 `AI-Health-AutoSelect-iOS.sgmodule`。
+5. 启用模块，保存并应用配置。
+6. 保持 Surge 运行。iOS 后台执行受系统限制，定时任务可能不会像 Mac 一样稳定准点；打开 Surge 或网络活跃时更容易触发。
 
 ## 工作原理
 
@@ -96,6 +116,7 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 
 ### v1.2.1
 
+- 增加 iOS 专用模块 `AI-Health-AutoSelect-iOS.sgmodule`，使用官方 `#!requirement=SYSTEM = 'iOS'` 平台限制。
 - 增加 `订阅获取时间`、`获取时间`、`更新时间`、`Subscription`、`Updated` 等订阅元信息过滤。
 - 地区组不再通过国旗 emoji 匹配节点，降低把订阅提示误识别为地区节点的概率。
 
