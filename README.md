@@ -1,36 +1,36 @@
-# Surge AI Health Auto Select
+# Surge Config
 
-Surge module and cron script for testing AI candidate policies against real AI service APIs and automatically selecting the fastest usable policies.
+Surge profile template plus an AI auto-select module.
 
 ## Files
 
+- `Steve_WgetCloud_AI_Smart.conf`: Sanitized Surge profile template. Replace `输入你的订阅链接` with your own subscription URL before use.
 - `AI-Health-AutoSelect.sgmodule`: Surge module entry.
 - `ai-health-autoselect.js`: Cron script used by the module.
-- `AI-OpenAI-AutoSelect.sgmodule`: Compatibility URL for the old module name.
 
 ## Import URL
 
 After pushing this repository to GitHub, import the raw module URL in Surge:
 
 ```text
-https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect.sgmodule
+https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect.sgmodule
 ```
 
 The module loads the script from:
 
 ```text
-https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autoselect.js
+https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
 ```
 
 ## How It Works
 
-The script runs every 10 minutes. It reads candidate policies from AI service policy groups, tests each candidate through real API endpoints, filters out blocked or failed policies, and switches each service group to the fastest usable policy.
+The script runs every 10 minutes. It reads candidate policies from the single `AI` select group, then:
 
-Default service groups:
-
-- `AI-OpenAI` -> `https://api.openai.com/v1/models`
-- `AI-Claude` -> `https://api.anthropic.com/v1/models`
-- `AI-Gemini` -> `https://generativelanguage.googleapis.com/v1beta/models`
+1. Switches `AI` to each candidate.
+2. Checks `http://chat.openai.com/cdn-cgi/trace` for Cloudflare `loc`.
+3. Skips unsupported ChatGPT regions.
+4. Checks `https://chatgpt.com/backend-api/models`.
+5. Selects the fastest usable candidate.
 
 Expected OpenAI responses without an API key:
 
@@ -41,9 +41,9 @@ Expected OpenAI responses without an API key:
 ## Requirements
 
 - Surge Mac or Surge iOS with scripting enabled.
-- A profile containing `AI-OpenAI`, `AI-Claude`, and `AI-Gemini` select or url-test policy groups.
-- Candidate policies should be visible under those service groups, directly or through nested policy groups.
+- A profile containing one `AI` select policy group.
+- Candidate policies should be directly visible under `AI`.
 
 ## Notes
 
-Surge `url-test` considers any HTTP response successful, so it cannot reliably distinguish OpenAI `403` region blocks from usable responses. This script checks status code and response content for a more realistic AI availability test.
+Surge `url-test` considers any HTTP response successful, so it cannot reliably distinguish ChatGPT region blocks from usable responses. This script checks Cloudflare trace, status code, and response content for a more realistic AI availability test.
