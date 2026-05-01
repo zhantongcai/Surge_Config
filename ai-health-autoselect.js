@@ -21,8 +21,9 @@ const DEFAULT_CONFIG = {
       name: "OpenAI",
       targetGroup: "AI-OpenAI",
       sourceGroup: "AI-OpenAI",
-      url: "https://api.openai.com/v1/models",
+      url: "https://chatgpt.com/backend-api/models",
       goodStatus: [200, 401, 429],
+      blockedText: /(unsupported_country|unsupported country|not available|not supported|access denied|forbidden|blocked|not support|不支持|所在的地区|地区不支持)/i,
     },
     {
       name: "Claude",
@@ -133,7 +134,7 @@ function testSelectedPolicy(policyGroup, candidate, task, config) {
       const status = response && response.status;
       const body = typeof data === "string" ? data.slice(0, 1600) : "";
       const blockedPattern = task.blockedText || config.blockedText;
-      const blocked = status === 403 || blockedPattern.test(body);
+      const blocked = blockedPattern.test(body);
       const good = (task.goodStatus || [200, 401, 429]).indexOf(status) >= 0;
       const usable = !error && good && !blocked;
       resolve({ service: task.name, policy: candidate, usable, status, latency, error: error ? String(error) : "" });
