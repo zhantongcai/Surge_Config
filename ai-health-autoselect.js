@@ -17,7 +17,7 @@ const CONFIG = {
   goodStatus: [200, 401, 429],
   notify: true,
   debug: true,
-  badName: /(Remain|Expired|官网|如需|套餐|套餐到期|套餐重置|到期|重置|去除|剩余|距离|Reset|流量)/i,
+  badName: /(Remain|Expired|Expire|Expiry|Reset|Traffic|官网|网址|网站|订阅|链接|频道|群组|客服|工单|公告|通知|提示|如需|套餐|套餐到期|套餐重置|到期|过期|失效|有效期|重置|刷新|更新|剩余|已用|可用|流量|倍率|剩余流量|距离|去除|失联|续费|购买|用户|账号|账户|邮箱|TG|Telegram|QQ|微信|[0-9]{4}[-/.][0-9]{1,2}[-/.][0-9]{1,2}|[0-9]+(\\.[0-9]+)?\\s*(GB|MB|TB|G|M|T)\\b|[0-9]+(\\.[0-9]+)?\\s*[xX倍]|[0-9]+%)/i,
   regionFilter: /(美|美国|US|States|American|日|日本|JP|Japan|坡|新加坡|狮城|SG|Singapore|台|台湾|TW|Tai|英|英国|UK|United Kingdom|韩|韩国|KR|Korea)/i,
   allowedLoc: [
     "AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"
