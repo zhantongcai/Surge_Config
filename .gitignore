@@ -1,0 +1,4 @@
+*.conf
+*.p12
+*.mobileconfig
+.DS_Store
