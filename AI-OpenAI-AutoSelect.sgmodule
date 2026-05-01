@@ -4,4 +4,4 @@
 #!requirement=CORE_VERSION>=20
 
 [Script]
-AI OpenAI Auto Select = type=cron,cronexp="*/10 * * * *",timeout=60,script-path=https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-openai-autoselect.js,argument=group=AI&source=AI&url=https%3A%2F%2Fapi.openai.com%2Fv1%2Fmodels
+AI OpenAI Auto Select = type=cron,cronexp="*/10 * * * *",timeout=60,script-path=https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-openai-autoselect.js,argument=group=AI&source=AI&url=https%3A%2F%2Fapi.openai.com%2Fv1%2Fmodels
