@@ -11,6 +11,7 @@ const DEFAULT_CONFIG = {
   timeout: 6,
   concurrency: 4,
   notify: true,
+  debug: true,
   recursive: true,
   regionFilter: /(美|美国|US|States|American|日|日本|JP|Japan|坡|新加坡|狮城|SG|Singapore|港|香港|HK|Hong|台|台湾|TW|Tai)/i,
   badName: /(Remain|Expired|官网|如需|套餐|去除|剩余|距离|Reset|重置|流量)/i,
@@ -35,7 +36,7 @@ const DEFAULT_CONFIG = {
       targetGroup: "AI-Gemini",
       sourceGroup: "AI-Gemini",
       url: "https://generativelanguage.googleapis.com/v1beta/models",
-      goodStatus: [200, 400, 401, 403, 429],
+      goodStatus: [200, 400, 401, 429],
       blockedText: /(unsupported_country|unsupported country|not available|access denied|forbidden|blocked)/i,
     },
   ],
@@ -108,12 +109,19 @@ function flattenCandidates(groups, groupName, config, visited) {
   return out;
 }
 
-function testPolicy(policy, task, config) {
+async function selectPolicy(group, policy) {
+  return api("POST", "/v1/policy_groups/select", {
+    group_name: group,
+    policy,
+  });
+}
+
+function testSelectedPolicy(policyGroup, candidate, task, config) {
   const started = Date.now();
   return new Promise((resolve) => {
     $httpClient.get({
       url: task.url,
-      policy,
+      policy: policyGroup,
       timeout: config.timeout,
       headers: {
         "User-Agent": "Surge-AI-Health-AutoSelect/1.0",
@@ -125,25 +133,12 @@ function testPolicy(policy, task, config) {
       const status = response && response.status;
       const body = typeof data === "string" ? data.slice(0, 1600) : "";
       const blockedPattern = task.blockedText || config.blockedText;
-      const blocked = status === 403 && task.name !== "Gemini" || blockedPattern.test(body);
+      const blocked = status === 403 || blockedPattern.test(body);
       const good = (task.goodStatus || [200, 401, 429]).indexOf(status) >= 0;
       const usable = !error && good && !blocked;
-      resolve({ service: task.name, policy, usable, status, latency, error: error ? String(error) : "" });
+      resolve({ service: task.name, policy: candidate, usable, status, latency, error: error ? String(error) : "" });
     });
   });
-}
-
-async function pool(items, limit, worker) {
-  const results = [];
-  let next = 0;
-  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
-    while (next < items.length) {
-      const index = next++;
-      results[index] = await worker(items[index]);
-    }
-  });
-  await Promise.all(runners);
-  return results;
 }
 
 async function runTask(task, groups, config) {
@@ -156,7 +151,15 @@ async function runTask(task, groups, config) {
     return { task: task.name, selected: null, error: `No candidates in ${task.sourceGroup}` };
   }
 
-  const results = await pool(candidates, config.concurrency, (policy) => testPolicy(policy, task, config));
+  const results = [];
+  for (const policy of candidates) {
+    const selected = await selectPolicy(task.targetGroup, policy);
+    if (selected && selected.error) {
+      results.push({ service: task.name, policy, usable: false, status: null, latency: 0, error: selected.error });
+      continue;
+    }
+    results.push(await testSelectedPolicy(task.targetGroup, policy, task, config));
+  }
   const usable = results.filter((item) => item && item.usable).sort((a, b) => a.latency - b.latency);
 
   if (!usable.length) {
@@ -190,8 +193,18 @@ async function runTask(task, groups, config) {
     if (!item.selected) return `${item.task}: ${item.error}`;
     return `${item.task}: ${item.selected.policy} (${item.selected.status}, ${item.selected.latency}ms)`;
   });
+  const debugLines = [];
+  if (config.debug) {
+    for (const item of summaries) {
+      const results = (item.results || []).slice(0, 8).map((r) => {
+        const reason = r.error || r.status || "no-status";
+        return `${item.task}/${r.policy}: ${reason}, ${r.latency}ms`;
+      });
+      debugLines.push.apply(debugLines, results);
+    }
+  }
 
-  console.log(lines.join("\n"));
+  console.log(lines.concat(debugLines).join("\n"));
   if (config.notify && failed.length) {
     $notification.post("AI Health Auto Select", `${ok.length}/${summaries.length} services updated`, lines.join("\n"));
   }
