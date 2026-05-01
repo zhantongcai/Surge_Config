@@ -49,7 +49,14 @@ function api(method, path, body) {
 
 function groupList(payload) {
   if (Array.isArray(payload)) return payload;
-  return payload.policy_groups || payload.groups || payload.data || [];
+  const source = payload.policy_groups || payload.groups || payload.data;
+  if (source && !Array.isArray(source) && typeof source === "object") {
+    return Object.keys(source).map((name) => ({ name, policies: source[name] }));
+  }
+  if (!source && payload && typeof payload === "object") {
+    return Object.keys(payload).map((name) => ({ name, policies: payload[name] }));
+  }
+  return source || [];
 }
 
 function groupPolicies(group) {
@@ -58,6 +65,10 @@ function groupPolicies(group) {
 
 function policyName(item) {
   return typeof item === "string" ? item : item && item.name;
+}
+
+function isPolicyGroupItem(item) {
+  return !!(item && typeof item === "object" && item.isGroup);
 }
 
 function uniq(items) {
@@ -77,7 +88,8 @@ function flattenCandidates(groups, groupName, config, visited) {
   if (!group) return [groupName];
 
   const type = String(group.type || group.group_type || "").toLowerCase();
-  const children = groupPolicies(group).map(policyName).filter(Boolean);
+  const policyItems = groupPolicies(group);
+  const children = policyItems.map(policyName).filter(Boolean);
   const looksLikeProxyGroup = type && type !== "select" && type !== "url-test" && type !== "fallback" && type !== "load-balance" && type !== "smart";
 
   if (!config.recursive || looksLikeProxyGroup || !children.length) {
@@ -85,8 +97,13 @@ function flattenCandidates(groups, groupName, config, visited) {
   }
 
   let out = [];
-  for (const child of children) {
-    out = out.concat(flattenCandidates(groups, child, config, visited));
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    if (isPolicyGroupItem(policyItems[i])) {
+      out = out.concat(flattenCandidates(groups, child, config, visited));
+    } else {
+      out.push(child);
+    }
   }
   return out;
 }
