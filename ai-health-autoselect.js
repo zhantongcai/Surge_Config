@@ -1,46 +1,28 @@
 /*
- * Surge cron script: test AI policy candidates with real AI service endpoints,
- * then switch select groups to the fastest policies that are not region-blocked.
+ * Surge cron script: keep one AI select group on the best ChatGPT-capable node.
  *
- * Expected API outcomes without an API key:
- * - 200/401/429 usually mean the endpoint is reachable from this IP.
- * - 403 or region/country block text means the policy is excluded.
+ * Flow:
+ * 1. Read candidates from the AI select group.
+ * 2. Switch AI to each candidate.
+ * 3. Pre-check Cloudflare trace from chat.openai.com to get loc/colo/warp.
+ * 4. Confirm ChatGPT backend availability with chatgpt.com/backend-api/models.
+ * 5. Select the fastest usable candidate; restore original selection if none works.
  */
 
-const DEFAULT_CONFIG = {
+const CONFIG = {
+  group: "AI",
   timeout: 6,
-  concurrency: 4,
+  traceUrl: "http://chat.openai.com/cdn-cgi/trace",
+  checkUrl: "https://chatgpt.com/backend-api/models",
+  goodStatus: [200, 401, 429],
   notify: true,
   debug: true,
-  recursive: true,
-  regionFilter: /(美|美国|US|States|American|日|日本|JP|Japan|坡|新加坡|狮城|SG|Singapore|港|香港|HK|Hong|台|台湾|TW|Tai)/i,
   badName: /(Remain|Expired|官网|如需|套餐|去除|剩余|距离|Reset|重置|流量)/i,
-  blockedText: /(unsupported_country|unsupported country|country|region|not available|not supported|access denied|forbidden|blocked)/i,
-  tasks: [
-    {
-      name: "OpenAI",
-      targetGroup: "AI-OpenAI",
-      sourceGroup: "AI-OpenAI",
-      url: "https://chatgpt.com/backend-api/models",
-      goodStatus: [200, 401, 429],
-      blockedText: /(unsupported_country|unsupported country|not available|not supported|access denied|forbidden|blocked|not support|不支持|所在的地区|地区不支持)/i,
-    },
-    {
-      name: "Claude",
-      targetGroup: "AI-Claude",
-      sourceGroup: "AI-Claude",
-      url: "https://api.anthropic.com/v1/models",
-      goodStatus: [200, 401, 429],
-    },
-    {
-      name: "Gemini",
-      targetGroup: "AI-Gemini",
-      sourceGroup: "AI-Gemini",
-      url: "https://generativelanguage.googleapis.com/v1beta/models",
-      goodStatus: [200, 400, 401, 429],
-      blockedText: /(unsupported_country|unsupported country|not available|access denied|forbidden|blocked)/i,
-    },
+  regionFilter: /(美|美国|US|States|American|日|日本|JP|Japan|坡|新加坡|狮城|SG|Singapore|台|台湾|TW|Tai|英|英国|UK|United Kingdom|韩|韩国|KR|Korea)/i,
+  allowedLoc: [
+    "AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"
   ],
+  blockedText: /(unsupported_country|unsupported country|not available|not supported|access denied|forbidden|blocked|not support|不支持|所在的地区|地区不支持)/i,
 };
 
 function api(method, path, body) {
@@ -69,10 +51,6 @@ function policyName(item) {
   return typeof item === "string" ? item : item && item.name;
 }
 
-function isPolicyGroupItem(item) {
-  return !!(item && typeof item === "object" && item.isGroup);
-}
-
 function uniq(items) {
   const seen = {};
   return items.filter((item) => {
@@ -82,135 +60,117 @@ function uniq(items) {
   });
 }
 
-function flattenCandidates(groups, groupName, config, visited) {
-  if (visited[groupName]) return [];
-  visited[groupName] = true;
+async function selectPolicy(group, policy) {
+  return api("POST", "/v1/policy_groups/select", { group_name: group, policy });
+}
 
-  const group = groups.find((item) => item && item.name === groupName);
-  if (!group) return [groupName];
-
-  const type = String(group.type || group.group_type || "").toLowerCase();
-  const policyItems = groupPolicies(group);
-  const children = policyItems.map(policyName).filter(Boolean);
-  const looksLikeProxyGroup = type && type !== "select" && type !== "url-test" && type !== "fallback" && type !== "load-balance" && type !== "smart";
-
-  if (!config.recursive || looksLikeProxyGroup || !children.length) {
-    return [groupName];
-  }
-
-  let out = [];
-  for (let i = 0; i < children.length; i++) {
-    const child = children[i];
-    if (isPolicyGroupItem(policyItems[i])) {
-      out = out.concat(flattenCandidates(groups, child, config, visited));
-    } else {
-      out.push(child);
-    }
-  }
+function parseTrace(text) {
+  const out = {};
+  String(text || "").split("\n").forEach((line) => {
+    const idx = line.indexOf("=");
+    if (idx > 0) out[line.slice(0, idx)] = line.slice(idx + 1);
+  });
   return out;
 }
 
-async function selectPolicy(group, policy) {
-  return api("POST", "/v1/policy_groups/select", {
-    group_name: group,
-    policy,
-  });
-}
-
-function testSelectedPolicy(policyGroup, candidate, task, config) {
+function requestViaAI(url) {
   const started = Date.now();
   return new Promise((resolve) => {
     $httpClient.get({
-      url: task.url,
-      policy: policyGroup,
-      timeout: config.timeout,
+      url,
+      policy: CONFIG.group,
+      timeout: CONFIG.timeout,
       headers: {
-        "User-Agent": "Surge-AI-Health-AutoSelect/1.0",
+        "User-Agent": "Surge-AI-Health-AutoSelect/2.0",
         "Accept": "application/json,text/plain,*/*",
       },
       "auto-redirect": false,
     }, (error, response, data) => {
-      const latency = Date.now() - started;
-      const status = response && response.status;
-      const body = typeof data === "string" ? data.slice(0, 1600) : "";
-      const blockedPattern = task.blockedText || config.blockedText;
-      const blocked = blockedPattern.test(body);
-      const good = (task.goodStatus || [200, 401, 429]).indexOf(status) >= 0;
-      const usable = !error && good && !blocked;
-      resolve({ service: task.name, policy: candidate, usable, status, latency, error: error ? String(error) : "" });
+      resolve({
+        error: error ? String(error) : "",
+        status: response && response.status,
+        body: typeof data === "string" ? data.slice(0, 2000) : "",
+        latency: Date.now() - started,
+      });
     });
   });
 }
 
-async function runTask(task, groups, config) {
-  const original = await api("GET", `/v1/policy_groups/select?group_name=${encodeURIComponent(task.targetGroup)}`);
-  const originalPolicy = original && original.policy;
-  const raw = flattenCandidates(groups, task.sourceGroup, config, {});
-  const candidates = uniq(raw)
-    .filter((name) => !config.badName.test(name))
-    .filter((name) => config.regionFilter.test(name));
-
-  if (!candidates.length) {
-    return { task: task.name, selected: null, error: `No candidates in ${task.sourceGroup}` };
+async function testCandidate(policy) {
+  const selected = await selectPolicy(CONFIG.group, policy);
+  if (selected && selected.error) {
+    return { policy, usable: false, error: selected.error, latency: 0 };
   }
 
-  const results = [];
-  for (const policy of candidates) {
-    const selected = await selectPolicy(task.targetGroup, policy);
-    if (selected && selected.error) {
-      results.push({ service: task.name, policy, usable: false, status: null, latency: 0, error: selected.error });
-      continue;
-    }
-    results.push(await testSelectedPolicy(task.targetGroup, policy, task, config));
+  const traceResp = await requestViaAI(CONFIG.traceUrl);
+  const trace = parseTrace(traceResp.body);
+  const loc = String(trace.loc || "").toUpperCase();
+  const locAllowed = CONFIG.allowedLoc.indexOf(loc) >= 0;
+  if (traceResp.error || !locAllowed) {
+    return {
+      policy,
+      usable: false,
+      status: traceResp.status,
+      latency: traceResp.latency,
+      loc,
+      colo: trace.colo,
+      warp: trace.warp,
+      error: traceResp.error || `loc ${loc || "unknown"} not allowed`,
+    };
   }
-  const usable = results.filter((item) => item && item.usable).sort((a, b) => a.latency - b.latency);
 
-  if (!usable.length) {
-    if (originalPolicy) await selectPolicy(task.targetGroup, originalPolicy);
-    return { task: task.name, selected: null, results, error: "No usable policy" };
-  }
-
-  const best = usable[0];
-  await api("POST", "/v1/policy_groups/select", {
-    group_name: task.targetGroup,
-    policy: best.policy,
-  });
-  return { task: task.name, selected: best, results };
+  const checkResp = await requestViaAI(CONFIG.checkUrl);
+  const blocked = CONFIG.blockedText.test(checkResp.body) || checkResp.status === 403;
+  const good = CONFIG.goodStatus.indexOf(checkResp.status) >= 0;
+  return {
+    policy,
+    usable: !checkResp.error && good && !blocked,
+    status: checkResp.status,
+    latency: traceResp.latency + checkResp.latency,
+    loc,
+    colo: trace.colo,
+    warp: trace.warp,
+    error: checkResp.error || (blocked ? "blocked" : ""),
+  };
 }
 
 (async () => {
-  const config = DEFAULT_CONFIG;
+  const current = await api("GET", `/v1/policy_groups/select?group_name=${encodeURIComponent(CONFIG.group)}`);
+  const originalPolicy = current && current.policy;
   const payload = await api("GET", "/v1/policy_groups");
   const groups = groupList(payload);
-  const summaries = [];
+  const aiGroup = groups.find((item) => item && item.name === CONFIG.group);
+  const candidates = uniq(groupPolicies(aiGroup).map(policyName))
+    .filter(Boolean)
+    .filter((name) => !CONFIG.badName.test(name))
+    .filter((name) => CONFIG.regionFilter.test(name));
 
-  for (const task of config.tasks) {
-    summaries.push(await runTask(task, groups, config));
+  const results = [];
+  for (const policy of candidates) {
+    results.push(await testCandidate(policy));
   }
 
-  const ok = summaries.filter((item) => item.selected);
-  const failed = summaries.filter((item) => !item.selected);
+  const usable = results.filter((item) => item.usable).sort((a, b) => a.latency - b.latency);
+  let summary;
+  if (usable.length) {
+    const best = usable[0];
+    await selectPolicy(CONFIG.group, best.policy);
+    summary = `AI: ${best.policy} (${best.loc || "??"}, ${best.status}, ${best.latency}ms)`;
+  } else {
+    if (originalPolicy) await selectPolicy(CONFIG.group, originalPolicy);
+    summary = "AI: No usable ChatGPT policy";
+  }
+
+  const debugLines = CONFIG.debug ? results.slice(0, 16).map((r) => {
+    const reason = r.error || r.status || "no-status";
+    return `${r.policy}: ${r.loc || "??"}/${r.colo || "?"}, ${reason}, ${r.latency}ms`;
+  }) : [];
+
   const checkedAt = new Date().toISOString();
-  $persistentStore.write(JSON.stringify({ checkedAt, summaries }), "ai.health.autoselect.last");
-
-  const lines = summaries.map((item) => {
-    if (!item.selected) return `${item.task}: ${item.error}`;
-    return `${item.task}: ${item.selected.policy} (${item.selected.status}, ${item.selected.latency}ms)`;
-  });
-  const debugLines = [];
-  if (config.debug) {
-    for (const item of summaries) {
-      const results = (item.results || []).slice(0, 8).map((r) => {
-        const reason = r.error || r.status || "no-status";
-        return `${item.task}/${r.policy}: ${reason}, ${r.latency}ms`;
-      });
-      debugLines.push.apply(debugLines, results);
-    }
-  }
-
-  console.log(lines.concat(debugLines).join("\n"));
-  if (config.notify && failed.length) {
-    $notification.post("AI Health Auto Select", `${ok.length}/${summaries.length} services updated`, lines.join("\n"));
+  $persistentStore.write(JSON.stringify({ checkedAt, selected: usable[0] || null, results }), "ai.health.autoselect.last");
+  console.log([summary].concat(debugLines).join("\n"));
+  if (CONFIG.notify && !usable.length) {
+    $notification.post("AI Health Auto Select", "No usable ChatGPT policy", debugLines.slice(0, 6).join("\n"));
   }
   $done();
 })().catch((error) => {
