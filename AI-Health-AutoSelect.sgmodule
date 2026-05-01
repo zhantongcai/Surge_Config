@@ -1,5 +1,7 @@
-#!name=AI Health Auto Select
-#!desc=Periodically test AI candidate policies against AI service APIs and select the fastest usable policies.
+#!name=AI Health Auto Select v1.2.0
+#!desc=AI 节点自动优选：基于 ChatGPT 地区预筛与真实后端可用性检测，自动选择 AI 组内最快可用节点。
+#!author=zhantongcai
+#!homepage=https://github.com/zhantongcai/Surge_Config
 #!system=mac
 
 [Script]
