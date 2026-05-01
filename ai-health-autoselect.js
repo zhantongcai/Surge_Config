@@ -142,6 +142,8 @@ function testSelectedPolicy(policyGroup, candidate, task, config) {
 }
 
 async function runTask(task, groups, config) {
+  const original = await api("GET", `/v1/policy_groups/select?group_name=${encodeURIComponent(task.targetGroup)}`);
+  const originalPolicy = original && original.policy;
   const raw = flattenCandidates(groups, task.sourceGroup, config, {});
   const candidates = uniq(raw)
     .filter((name) => !config.badName.test(name))
@@ -163,6 +165,7 @@ async function runTask(task, groups, config) {
   const usable = results.filter((item) => item && item.usable).sort((a, b) => a.latency - b.latency);
 
   if (!usable.length) {
+    if (originalPolicy) await selectPolicy(task.targetGroup, originalPolicy);
     return { task: task.name, selected: null, results, error: "No usable policy" };
   }
 
