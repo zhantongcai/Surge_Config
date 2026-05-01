@@ -1,5 +1,5 @@
 #!name=AI Health Auto Select
-#!desc=Compatibility URL for the renamed AI Health Auto Select module.
+#!desc=Periodically test AI candidate policies against AI service APIs and select the fastest usable policies.
 #!system=mac
 
 [Script]
