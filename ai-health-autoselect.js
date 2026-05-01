@@ -17,7 +17,7 @@ const CONFIG = {
   goodStatus: [200, 401, 429],
   notify: true,
   debug: true,
-  badName: /(Remain|Expired|官网|如需|套餐|去除|剩余|距离|Reset|重置|流量)/i,
+  badName: /(Remain|Expired|官网|如需|套餐|套餐到期|套餐重置|到期|重置|去除|剩余|距离|Reset|流量)/i,
   regionFilter: /(美|美国|US|States|American|日|日本|JP|Japan|坡|新加坡|狮城|SG|Singapore|台|台湾|TW|Tai|英|英国|UK|United Kingdom|韩|韩国|KR|Korea)/i,
   allowedLoc: [
     "AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"
