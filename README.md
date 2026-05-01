@@ -25,7 +25,7 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect.s
 固定版本地址：
 
 ```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@ea9da1f/AI-Health-AutoSelect.sgmodule
+https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@e702dbd/AI-Health-AutoSelect.sgmodule
 ```
 
 模块会加载脚本：
