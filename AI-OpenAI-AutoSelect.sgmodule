@@ -1,5 +1,6 @@
 #!name=AI OpenAI Auto Select
 #!desc=Periodically test AI candidate policies against OpenAI API and select the fastest usable policy for the AI group.
+#!system=mac
 
 [Script]
-AI_OpenAI_Auto_Select = type=cron,cronexp=*/10 * * * *,timeout=60,script-path=https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-openai-autoselect.js
+AI_OpenAI_Auto_Select = type=cron,cronexp="*/10 * * * *",timeout=60,script-path=https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-openai-autoselect.js
