@@ -51,7 +51,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 
 ## 模块版本
 
-- 当前版本：`v1.2.5`
+- 当前版本：`v1.2.6`
 - 适用目标：单一 `AI` 策略组
 - 检测标准：以 ChatGPT / OpenAI 网页可用性为准
 
@@ -73,7 +73,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 
 iOS 也保留通用模块地址 `AI-Health-AutoSelect-iOS.sgmodule`，但如果 CDN 缓存没有刷新，优先使用带版本号的模块地址。
 
-Mac 模块会加载 `main` 分支脚本：
+Mac 模块会加载 `main` 分支脚本，用于共享定时检测和面板手动检测逻辑：
 
 ```text
 https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autoselect.js
@@ -105,8 +105,8 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autose
 
 ### 手动触发
 
+- Mac：安装 Mac 模块后，在 Surge 的 Dashboard / Panel 区域找到 `AI Health`，点击面板刷新按钮即可手动检测并自动切换；也可以在脚本页面手动运行。
 - iOS：安装 iOS 专版模块后，在 Surge 面板里找到 `AI Health`，点击右上角刷新按钮即可手动检测并自动切换；也可以进入脚本列表长按 `ai-health-autoselect` 运行，或通过系统 Shortcuts 调用 Surge 脚本。
-- Mac：可以在脚本页面手动运行，或使用 Surge Mac CLI evaluate 脚本做测试。
 
 ## 工作原理
 
@@ -161,6 +161,11 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 公开配置文件不包含个人订阅链接和 MITM 证书信息。请不要把自己的真实订阅链接、证书、密码提交到公开仓库。
 
 ## 更新记录
+
+### v1.2.6
+
+- Mac 模块增加 `AI Health` 面板，支持在 Mac 端点击刷新按钮手动检测并自动切换。
+- Mac 与 iOS 共用同一份 `ai-health-autoselect.js` 面板输出逻辑。
 
 ### v1.2.5
 

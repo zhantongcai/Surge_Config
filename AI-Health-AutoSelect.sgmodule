@@ -1,8 +1,12 @@
-#!name=AI Health Auto Select Mac - AI 节点自动优选 v1.2.5
-#!desc=版本 v1.2.5。Mac 专版：每 6 小时自动检测一次；从 AI、美国、日本、新加坡、台湾、英国、韩国候选组中测试节点，用 ChatGPT Cloudflare trace 判断出口地区，只要出口地区在 OpenAI 支持列表内即视为可用，并自动切换 AI 组到最快可用节点。
+#!name=AI Health Auto Select Mac - AI 节点自动优选 v1.2.6
+#!desc=版本 v1.2.6。Mac 专版：每 6 小时自动检测一次，也可通过 AI Health 面板手动刷新；从 AI、美国、日本、新加坡、台湾、英国、韩国候选组中测试节点，用 ChatGPT Cloudflare trace 判断出口地区，只要出口地区在 OpenAI 支持列表内即视为可用，并自动切换 AI 组到最快可用节点。
 #!author=zhantongcai
 #!homepage=https://github.com/zhantongcai/Surge_Config
 #!system=mac
 
 [Script]
 ai-health-autoselect = type=cron,cronexp="0 */6 * * *",timeout=90,script-path=https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autoselect.js
+ai-health-autoselect-panel = type=generic,timeout=90,script-path=https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autoselect.js
+
+[Panel]
+AI Health = title="AI 自动优选 v1.2.6",content="6 小时自动检测；点击刷新按钮按 OpenAI 支持地区手动优选",style=info,script-name=ai-health-autoselect-panel
