@@ -2,7 +2,7 @@
  * Surge cron script: keep one AI select group on the best ChatGPT-capable node.
  *
  * Flow:
- * 1. Read candidates from the AI select group.
+ * 1. Read candidates from the AI select group and AI source country groups.
  * 2. Switch AI to each candidate.
  * 3. Pre-check Cloudflare trace from chat.openai.com to get loc/colo/warp.
  * 4. Confirm ChatGPT backend availability with chatgpt.com/backend-api/models.
@@ -11,6 +11,7 @@
 
 const CONFIG = {
   group: "AI",
+  sourceGroups: ["AI", "United States", "Japan", "Singapore", "Taiwan", "United Kingdom", "Korea"],
   timeout: 6,
   traceUrl: "http://chat.openai.com/cdn-cgi/trace",
   checkUrl: "https://chatgpt.com/backend-api/models",
@@ -81,6 +82,21 @@ function groupPolicies(group) {
 
 function policyName(item) {
   return typeof item === "string" ? item : item && item.name;
+}
+
+function collectCandidates(groups) {
+  const byName = {};
+  groups.forEach((group) => {
+    if (group && group.name) byName[group.name] = group;
+  });
+
+  return uniq(CONFIG.sourceGroups.reduce((items, groupName) => {
+    const group = byName[groupName];
+    return items.concat(groupPolicies(group).map(policyName));
+  }, []))
+    .filter(Boolean)
+    .filter((name) => !CONFIG.badName.test(name))
+    .filter((name) => CONFIG.regionFilter.test(name));
 }
 
 function uniq(items) {
@@ -171,11 +187,7 @@ async function testCandidate(policy) {
   const originalPolicy = current && current.policy;
   const payload = await api("GET", "/v1/policy_groups");
   const groups = groupList(payload);
-  const aiGroup = groups.find((item) => item && item.name === CONFIG.group);
-  const candidates = uniq(groupPolicies(aiGroup).map(policyName))
-    .filter(Boolean)
-    .filter((name) => !CONFIG.badName.test(name))
-    .filter((name) => CONFIG.regionFilter.test(name));
+  const candidates = collectCandidates(groups);
 
   const results = [];
   for (const policy of candidates) {

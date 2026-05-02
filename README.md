@@ -11,7 +11,7 @@ Surge 配置模板与 AI 节点自动优选模块。
 
 ## 模块版本
 
-- 当前版本：`v1.2.3`
+- 当前版本：`v1.2.4`
 - 适用目标：单一 `AI` 策略组
 - 检测标准：以 ChatGPT / OpenAI 网页可用性为准
 
@@ -39,10 +39,10 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect-i
 
 iOS 固定版本地址会在每次发布后更新。若 `main` 地址安装成功，日常使用优先用 `main` 即可。
 
-Mac 模块会加载固定脚本版本：
+Mac 模块会加载 `main` 分支脚本：
 
 ```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@44c7acc/ai-health-autoselect.js
+https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
 ```
 
 iOS 模块会加载 `main` 分支脚本，用于共享定时检测和面板手动检测逻辑：
@@ -78,15 +78,17 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.j
 
 脚本每 6 小时运行一次。它会读取单一 `AI` 策略组中的候选节点，然后：
 
-1. Switches `AI` to each candidate.
-2. Checks `http://chat.openai.com/cdn-cgi/trace` for Cloudflare `loc`.
-3. Skips unsupported ChatGPT regions.
-4. Checks `https://chatgpt.com/backend-api/models`.
-5. Selects the fastest usable candidate.
+1. Reads candidates from `AI`, `United States`, `Japan`, `Singapore`, `Taiwan`, `United Kingdom`, and `Korea`.
+2. Switches `AI` to each candidate.
+3. Checks `http://chat.openai.com/cdn-cgi/trace` for Cloudflare `loc`.
+4. Skips unsupported ChatGPT regions.
+5. Checks `https://chatgpt.com/backend-api/models`.
+6. Selects the fastest usable candidate.
 
 中文解释：
 
 - 先逐个切换 `AI` 组里的候选节点。
+- 候选节点至少来自美国、日本、新加坡、台湾、英国、韩国这 6 个地区组。
 - 先访问 `http://chat.openai.com/cdn-cgi/trace`，读取 Cloudflare 判断出的出口地区 `loc`。
 - 如果地区不在 ChatGPT 支持列表内，直接跳过。
 - 再访问 `https://chatgpt.com/backend-api/models` 做真实可用性确认。
@@ -124,6 +126,12 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 公开配置文件不包含个人订阅链接和 MITM 证书信息。请不要把自己的真实订阅链接、证书、密码提交到公开仓库。
 
 ## 更新记录
+
+### v1.2.4
+
+- 脚本候选来源扩展为 `AI`、`United States`、`Japan`、`Singapore`、`Taiwan`、`United Kingdom`、`Korea`。
+- 配置模板补充 `United Kingdom` 和 `Korea` 两个地区节点组。
+- Mac 模块也改为加载 `@main` 脚本，确保和 iOS 共享最新检测逻辑。
 
 ### v1.2.3
 
