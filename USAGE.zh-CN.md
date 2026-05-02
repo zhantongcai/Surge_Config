@@ -25,7 +25,7 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/Steve_WgetCloud_AI_Sma
 iOS 推荐安装带版本号的模块，避免 CDN 或 Surge 本地缓存继续使用旧模块：
 
 ```text
-https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.5.sgmodule
 ```
 
 固定版本地址：
@@ -45,18 +45,18 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 1. 在 Surge iOS 中导入配置文件。
 2. 把 `AllServer` 策略组里的 `输入你的订阅链接` 替换为自己的订阅链接。
 3. 确认策略组里有 `AI` 组。
-4. 从 URL 安装 iOS 模块 `AI-Health-AutoSelect-iOS-v1.2.4.sgmodule`。
+4. 从 URL 安装 iOS 模块 `AI-Health-AutoSelect-iOS-v1.2.5.sgmodule`。
 5. 启用模块并应用配置。
 6. 在 Surge 面板里找到 `AI Health`，点击刷新按钮即可手动检测。
 
 ## 模块功能
 
-- 版本：`v1.2.4`
+- 版本：`v1.2.5`
 - 自动检测频率：每 6 小时一次
 - 手动检测：iOS 面板 `AI Health` 点击刷新按钮
 - 候选来源：`AI`、`United States`、`Japan`、`Singapore`、`Taiwan`、`United Kingdom`、`Korea`
 - 订阅来源：`AI` 组自动引用主订阅节点组 `AllServer`，不需要重复填写订阅链接
-- 检测方式：先访问 `chat.openai.com/cdn-cgi/trace` 判断出口地区，再访问 `chatgpt.com/backend-api/models` 确认 ChatGPT 后端可达
+- 检测方式：访问 `chat.openai.com/cdn-cgi/trace` 判断出口地区，只要出口地区在 OpenAI 支持列表内即视为可用
 - 选择逻辑：自动切换 `AI` 组到最快的可用节点
 
 ## 常见问题
@@ -66,7 +66,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 优先检查你安装的 URL。旧的 `@main/AI-Health-AutoSelect-iOS.sgmodule` 可能被 CDN 或 Surge 缓存。建议改用带版本号的 iOS 模块：
 
 ```text
-https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.5.sgmodule
 ```
 
 ### 会测试全部节点吗？

@@ -25,7 +25,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/Steve_WgetCloud_
 推荐使用带版本号的 iOS 模块地址：
 
 ```text
-https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.5.sgmodule
 ```
 
 固定版本地址：
@@ -51,7 +51,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 
 ## 模块版本
 
-- 当前版本：`v1.2.4`
+- 当前版本：`v1.2.5`
 - 适用目标：单一 `AI` 策略组
 - 检测标准：以 ChatGPT / OpenAI 网页可用性为准
 
@@ -68,7 +68,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 在 Surge iOS 的模块页面中选择“从 URL 安装模块”，填入：
 
 ```text
-https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.5.sgmodule
 ```
 
 iOS 也保留通用模块地址 `AI-Health-AutoSelect-iOS.sgmodule`，但如果 CDN 缓存没有刷新，优先使用带版本号的模块地址。
@@ -116,7 +116,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autose
 2. Switches `AI` to each candidate.
 3. Checks `http://chat.openai.com/cdn-cgi/trace` for Cloudflare `loc`.
 4. Skips unsupported ChatGPT regions.
-5. Checks `https://chatgpt.com/backend-api/models`.
+5. Treats the candidate as usable if `loc` is in OpenAI supported countries/regions.
 6. Selects the fastest usable candidate.
 
 中文解释：
@@ -126,15 +126,15 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autose
 - `AI` 组会自动引用主订阅节点组 `AllServer`，不需要重复填写订阅链接。
 - 先访问 `http://chat.openai.com/cdn-cgi/trace`，读取 Cloudflare 判断出的出口地区 `loc`。
 - 如果地区不在 ChatGPT 支持列表内，直接跳过。
-- 再访问 `https://chatgpt.com/backend-api/models` 做真实可用性确认。
-- 排除 `403`、地区封锁、网络错误、超时等节点。
+- 只要出口地区在 OpenAI 支持列表内，就加入可用候选。
+- 排除网络错误、超时、无法获取出口地区、出口地区不在 OpenAI 支持列表内的节点。
 - 从可用节点中选择延迟最低的一个。
 
-预期响应：
+判断标准：
 
-- `401`：通常表示后端可达，只是未登录或无凭据，可视为可用。
-- `403`：通常表示地区或 IP 被阻止，会排除。
-- `429`：通常表示可达但限流，暂时视为可用。
+- `cdn-cgi/trace` 能返回 `loc`。
+- `loc` 在 OpenAI 支持国家/地区列表内。
+- 在可用候选中按 trace 延迟选择最快节点。
 
 ## 订阅信息过滤
 
@@ -161,6 +161,12 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 公开配置文件不包含个人订阅链接和 MITM 证书信息。请不要把自己的真实订阅链接、证书、密码提交到公开仓库。
 
 ## 更新记录
+
+### v1.2.5
+
+- 修复误判：不再使用 `chatgpt.com/backend-api/models` 作为二次硬检测，避免未登录、Cloudflare 或风控导致可用节点被误判不可用。
+- 判断逻辑改为 CFGPT 思路：以 `chat.openai.com/cdn-cgi/trace` 返回的出口 `loc` 是否在 OpenAI 支持列表内为准。
+- 增加 iOS 带版本号模块 `AI-Health-AutoSelect-iOS-v1.2.5.sgmodule`。
 
 ### v1.2.4
 
