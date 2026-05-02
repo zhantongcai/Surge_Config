@@ -51,9 +51,9 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 
 ## 模块功能
 
-- 版本：`v1.2.6`
+- 版本：`v1.2.5`
 - 自动检测频率：每 6 小时一次
-- 手动检测：iOS 面板 `AI Health` 点击刷新按钮；Mac 使用脚本页面或 Surge Mac CLI
+- 手动检测：iOS 面板 `AI Health` 点击刷新按钮；Mac 仅保留每 6 小时自动检测
 - 候选来源：`AI`、`United States`、`Japan`、`Singapore`、`Taiwan`、`United Kingdom`、`Korea`
 - 订阅来源：`AI` 组自动引用主订阅节点组 `AllServer`，不需要重复填写订阅链接
 - 检测方式：访问 `chat.openai.com/cdn-cgi/trace` 判断出口地区，只要出口地区在 OpenAI 支持列表内即视为可用
