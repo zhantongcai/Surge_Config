@@ -5,8 +5,8 @@
 #!requirement=SYSTEM = 'iOS'
 
 [Script]
-ai-health-autoselect = type=cron,cronexp="0 */6 * * *",timeout=90,script-path=https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
-ai-health-autoselect-panel = type=generic,timeout=90,script-path=https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
+ai-health-autoselect = type=cron,cronexp="0 */6 * * *",timeout=90,script-path=https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autoselect.js
+ai-health-autoselect-panel = type=generic,timeout=90,script-path=https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autoselect.js
 
 [Panel]
 AI Health = title="AI 自动优选 v1.2.4",content="6 小时自动检测；点击刷新按钮可手动检测 ChatGPT 可用节点",style=info,script-name=ai-health-autoselect-panel

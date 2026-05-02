@@ -2,6 +2,46 @@
 
 Surge 配置模板与 AI 节点自动优选模块。
 
+## 中文使用说明
+
+完整使用说明见：
+
+[USAGE.zh-CN.md](./USAGE.zh-CN.md)
+
+## GitHub 自动更新链接
+
+仓库主页：
+
+[https://github.com/zhantongcai/Surge_Config](https://github.com/zhantongcai/Surge_Config)
+
+### 配置文件
+
+```text
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/Steve_WgetCloud_AI_Smart.conf
+```
+
+### iOS 模块
+
+推荐使用带版本号的 iOS 模块地址：
+
+```text
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
+```
+
+固定版本地址：
+
+```text
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/de305ba/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
+```
+
+### Mac 模块
+
+```text
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect.sgmodule
+```
+
+注意：公开配置文件是脱敏模板，订阅链接位置是 `输入你的订阅链接`。如果用公开配置做自动更新，本地私人订阅链接可能需要重新填入；不要把私人订阅链接提交到公开仓库。
+
 ## 文件说明
 
 - `Steve_WgetCloud_AI_Smart.conf`：已脱敏的 Surge 配置模板。使用前请把 `输入你的订阅链接` 替换成自己的订阅链接。
@@ -20,13 +60,7 @@ Surge 配置模板与 AI 节点自动优选模块。
 在 Surge Mac 的模块页面中选择“从 URL 安装模块”，填入：
 
 ```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect.sgmodule
-```
-
-固定版本地址：
-
-```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@e702dbd/AI-Health-AutoSelect.sgmodule
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect.sgmodule
 ```
 
 ## 导入地址 iOS
@@ -34,7 +68,7 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@e702dbd/AI-Health-AutoSelec
 在 Surge iOS 的模块页面中选择“从 URL 安装模块”，填入：
 
 ```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
 ```
 
 iOS 也保留通用模块地址 `AI-Health-AutoSelect-iOS.sgmodule`，但如果 CDN 缓存没有刷新，优先使用带版本号的模块地址。
@@ -42,13 +76,13 @@ iOS 也保留通用模块地址 `AI-Health-AutoSelect-iOS.sgmodule`，但如果 
 Mac 模块会加载 `main` 分支脚本：
 
 ```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autoselect.js
 ```
 
 iOS 模块会加载 `main` 分支脚本，用于共享定时检测和面板手动检测逻辑：
 
 ```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autoselect.js
 ```
 
 ## 使用步骤
