@@ -1,0 +1,12 @@
+#!name=AI Health Auto Select iOS v1.2.4
+#!desc=AI 节点自动优选 iOS 专版：基于 ChatGPT 地区预筛与真实后端可用性检测，自动选择 AI 组内最快可用节点。
+#!author=zhantongcai
+#!homepage=https://github.com/zhantongcai/Surge_Config
+#!requirement=SYSTEM = 'iOS'
+
+[Script]
+ai-health-autoselect = type=cron,cronexp="0 */6 * * *",timeout=90,script-path=https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
+ai-health-autoselect-panel = type=generic,timeout=90,script-path=https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
+
+[Panel]
+AI Health = title="AI 自动优选",content="点击刷新按钮手动检测 ChatGPT 可用节点",style=info,script-name=ai-health-autoselect-panel

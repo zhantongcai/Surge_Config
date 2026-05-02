@@ -34,10 +34,10 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@e702dbd/AI-Health-AutoSelec
 在 Surge iOS 的模块页面中选择“从 URL 安装模块”，填入：
 
 ```text
-https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect-iOS.sgmodule
+https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
 ```
 
-iOS 固定版本地址会在每次发布后更新。若 `main` 地址安装成功，日常使用优先用 `main` 即可。
+iOS 也保留通用模块地址 `AI-Health-AutoSelect-iOS.sgmodule`，但如果 CDN 缓存没有刷新，优先使用带版本号的模块地址。
 
 Mac 模块会加载 `main` 分支脚本：
 
@@ -132,6 +132,7 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 - 脚本候选来源扩展为 `AI`、`United States`、`Japan`、`Singapore`、`Taiwan`、`United Kingdom`、`Korea`。
 - 配置模板补充 `United Kingdom` 和 `Korea` 两个地区节点组。
 - Mac 模块也改为加载 `@main` 脚本，确保和 iOS 共享最新检测逻辑。
+- 增加 iOS 带版本号模块 `AI-Health-AutoSelect-iOS-v1.2.4.sgmodule`，避免 jsDelivr `@main` 旧缓存影响安装。
 
 ### v1.2.3
 
