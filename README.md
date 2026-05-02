@@ -169,6 +169,7 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 - 补齐 ChatGPT 规则依赖：`auth0.com`、`arkoselabs`、`statsig`、`intercom`、`stripe`、`sentry`、`livekit`、`oaistatic`、`oaiusercontent` 等统一走 `AI`。
 - 将 AI 规则提前到广告/拒绝规则之前，避免远程 reject 规则误拦截 `events.statsigapi.net`、`bzr.openai.com` 等 OpenAI 依赖域名。
 - 补充 `chatgpt.com`、`oaistatic.com`、`oaiusercontent.com`、`auth0.com` 的 DNS 指定，降低依赖域名被本地/国内 DNS 解析干扰的概率。
+- 补齐 Claude、Gemini、Perplexity、Midjourney、Poe、OpenRouter、Grok、Meta AI、Dify、Jasper、Clipdrop、JetBrains AI、Hugging Face 等主流 AI 服务规则。
 - 增加 iOS 带版本号模块 `AI-Health-AutoSelect-iOS-v1.2.5.sgmodule`。
 
 ### v1.2.4
