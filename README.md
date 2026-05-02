@@ -11,7 +11,7 @@ Surge 配置模板与 AI 节点自动优选模块。
 
 ## 模块版本
 
-- 当前版本：`v1.2.1`
+- 当前版本：`v1.2.2`
 - 适用目标：单一 `AI` 策略组
 - 检测标准：以 ChatGPT / OpenAI 网页可用性为准
 
@@ -52,7 +52,7 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@44c7acc/ai-health-autoselec
 3. 确认配置里存在一个名为 `AI` 的 `select` 策略组。
 4. 在 Surge 中安装 `AI-Health-AutoSelect.sgmodule`。
 5. 启用模块并应用配置。
-6. 脚本会每 10 分钟自动检测并切换 `AI` 组的最优节点。
+6. 脚本会每 6 小时自动检测并切换 `AI` 组的最优节点。
 
 ### iOS 使用步骤
 
@@ -63,9 +63,14 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@44c7acc/ai-health-autoselec
 5. 启用模块，保存并应用配置。
 6. 保持 Surge 运行。iOS 后台执行受系统限制，定时任务可能不会像 Mac 一样稳定准点；打开 Surge 或网络活跃时更容易触发。
 
+### 手动触发
+
+- iOS：进入 Surge 的脚本列表，长按 `ai-health-autoselect` 手动运行；也可以通过系统 Shortcuts 调用 Surge 脚本。
+- Mac：可以在脚本页面手动运行，或使用 Surge Mac CLI evaluate 脚本做测试。
+
 ## 工作原理
 
-脚本每 10 分钟运行一次。它会读取单一 `AI` 策略组中的候选节点，然后：
+脚本每 6 小时运行一次。它会读取单一 `AI` 策略组中的候选节点，然后：
 
 1. Switches `AI` to each candidate.
 2. Checks `http://chat.openai.com/cdn-cgi/trace` for Cloudflare `loc`.
@@ -113,6 +118,11 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 公开配置文件不包含个人订阅链接和 MITM 证书信息。请不要把自己的真实订阅链接、证书、密码提交到公开仓库。
 
 ## 更新记录
+
+### v1.2.2
+
+- 将 Mac 和 iOS 模块自动检测频率从每 10 分钟调整为每 6 小时一次。
+- 补充手动触发说明：iOS 可长按脚本或使用系统 Shortcuts 运行。
 
 ### v1.2.1
 
