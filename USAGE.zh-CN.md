@@ -31,7 +31,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 固定版本地址：
 
 ```text
-https://raw.githubusercontent.com/zhantongcai/Surge_Config/de305ba/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
+https://raw.githubusercontent.com/zhantongcai/Surge_Config/8d885ec/AI-Health-AutoSelect-iOS-v1.2.4.sgmodule
 ```
 
 ### Mac 模块
