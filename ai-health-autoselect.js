@@ -25,6 +25,38 @@ const CONFIG = {
   blockedText: /(unsupported_country|unsupported country|not available|not supported|access denied|forbidden|blocked|not support|不支持|所在的地区|地区不支持)/i,
 };
 
+function isPanelRun() {
+  return typeof $input !== "undefined" && $input && $input.purpose === "panel";
+}
+
+function finish(summary, results, selected) {
+  if (isPanelRun()) {
+    const checkedAt = new Date().toLocaleString();
+    const lines = [
+      `上次检测：${checkedAt}`,
+      selected ? `当前节点：${selected.policy}` : "当前节点：无可用节点",
+      selected ? `出口地区：${selected.loc || "??"} / ${selected.colo || "?"}` : "",
+      selected ? `检测结果：${selected.status}, ${selected.latency}ms` : "",
+      "",
+    ].concat((results || []).slice(0, 6).map((r) => {
+      const status = r.usable ? "可用" : "不可用";
+      const reason = r.error || r.status || "no-status";
+      return `${status} ${r.policy}: ${r.loc || "??"}/${r.colo || "?"}, ${reason}, ${r.latency}ms`;
+    })).filter(Boolean);
+
+    $done({
+      title: summary,
+      content: lines.join("\n"),
+      style: selected ? "good" : "error",
+      icon: selected ? "checkmark.seal.fill" : "exclamationmark.triangle.fill",
+      "icon-color": selected ? "#22a06b" : "#d14343",
+    });
+    return;
+  }
+
+  $done();
+}
+
 function api(method, path, body) {
   return new Promise((resolve) => {
     $httpAPI(method, path, body || {}, (result) => resolve(result || {}));
@@ -172,8 +204,18 @@ async function testCandidate(policy) {
   if (CONFIG.notify && !usable.length) {
     $notification.post("AI Health Auto Select", "No usable ChatGPT policy", debugLines.slice(0, 6).join("\n"));
   }
-  $done();
+  finish(summary, results, usable[0] || null);
 })().catch((error) => {
   $notification.post("AI Health Auto Select", "Script error", String(error));
-  $done();
+  if (isPanelRun()) {
+    $done({
+      title: "AI: Script error",
+      content: String(error),
+      style: "error",
+      icon: "exclamationmark.triangle.fill",
+      "icon-color": "#d14343",
+    });
+  } else {
+    $done();
+  }
 });

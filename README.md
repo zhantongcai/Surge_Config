@@ -11,7 +11,7 @@ Surge 配置模板与 AI 节点自动优选模块。
 
 ## 模块版本
 
-- 当前版本：`v1.2.2`
+- 当前版本：`v1.2.3`
 - 适用目标：单一 `AI` 策略组
 - 检测标准：以 ChatGPT / OpenAI 网页可用性为准
 
@@ -39,10 +39,16 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/AI-Health-AutoSelect-i
 
 iOS 固定版本地址会在每次发布后更新。若 `main` 地址安装成功，日常使用优先用 `main` 即可。
 
-模块会加载脚本：
+Mac 模块会加载固定脚本版本：
 
 ```text
 https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@44c7acc/ai-health-autoselect.js
+```
+
+iOS 模块会加载 `main` 分支脚本，用于共享定时检测和面板手动检测逻辑：
+
+```text
+https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/ai-health-autoselect.js
 ```
 
 ## 使用步骤
@@ -65,7 +71,7 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@44c7acc/ai-health-autoselec
 
 ### 手动触发
 
-- iOS：进入 Surge 的脚本列表，长按 `ai-health-autoselect` 手动运行；也可以通过系统 Shortcuts 调用 Surge 脚本。
+- iOS：安装 iOS 专版模块后，在 Surge 面板里找到 `AI Health`，点击右上角刷新按钮即可手动检测并自动切换；也可以进入脚本列表长按 `ai-health-autoselect` 运行，或通过系统 Shortcuts 调用 Surge 脚本。
 - Mac：可以在脚本页面手动运行，或使用 Surge Mac CLI evaluate 脚本做测试。
 
 ## 工作原理
@@ -118,6 +124,12 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 公开配置文件不包含个人订阅链接和 MITM 证书信息。请不要把自己的真实订阅链接、证书、密码提交到公开仓库。
 
 ## 更新记录
+
+### v1.2.3
+
+- iOS 专版增加 `AI Health` 面板，点击面板刷新按钮即可手动运行检测。
+- 面板会展示上次检测时间、当前选中的 AI 节点、出口地区、状态码、延迟和前几条候选节点结果。
+- iOS 专版模块改为从 `@main` 加载脚本，方便面板与定时任务共享同一份最新逻辑。
 
 ### v1.2.2
 
