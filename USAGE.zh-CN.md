@@ -58,6 +58,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 - 订阅来源：`AI` 组自动引用主订阅节点组 `AllServer`，不需要重复填写订阅链接
 - 检测方式：访问 `chat.openai.com/cdn-cgi/trace` 判断出口地区，只要出口地区在 OpenAI 支持列表内即视为可用
 - 选择逻辑：自动切换 `AI` 组到最快的可用节点
+- 规则优先级：ChatGPT/OpenAI 依赖域名放在广告/拒绝规则之前，避免 `statsig`、`arkoselabs`、`oaistatic`、`oaiusercontent` 等依赖被误拦截
 
 ## 常见问题
 

@@ -166,6 +166,9 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 
 - 修复误判：不再使用 `chatgpt.com/backend-api/models` 作为二次硬检测，避免未登录、Cloudflare 或风控导致可用节点被误判不可用。
 - 判断逻辑改为 CFGPT 思路：以 `chat.openai.com/cdn-cgi/trace` 返回的出口 `loc` 是否在 OpenAI 支持列表内为准。
+- 补齐 ChatGPT 规则依赖：`auth0.com`、`arkoselabs`、`statsig`、`intercom`、`stripe`、`sentry`、`livekit`、`oaistatic`、`oaiusercontent` 等统一走 `AI`。
+- 将 AI 规则提前到广告/拒绝规则之前，避免远程 reject 规则误拦截 `events.statsigapi.net`、`bzr.openai.com` 等 OpenAI 依赖域名。
+- 补充 `chatgpt.com`、`oaistatic.com`、`oaiusercontent.com`、`auth0.com` 的 DNS 指定，降低依赖域名被本地/国内 DNS 解析干扰的概率。
 - 增加 iOS 带版本号模块 `AI-Health-AutoSelect-iOS-v1.2.5.sgmodule`。
 
 ### v1.2.4
