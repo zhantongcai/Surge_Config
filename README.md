@@ -44,7 +44,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 
 ## 文件说明
 
-- `Steve_WgetCloud_AI_Smart.conf`：已脱敏的 Surge 配置模板。使用前请把 `输入你的订阅链接` 替换成自己的订阅链接。
+- `Steve_WgetCloud_AI_Smart.conf`：已脱敏的 Surge 配置模板。使用前只需要把 `AllServer` 里的 `输入你的订阅链接` 替换成自己的订阅链接。
 - `AI-Health-AutoSelect.sgmodule`：Surge Mac 模块入口。
 - `AI-Health-AutoSelect-iOS.sgmodule`：Surge iOS 专用模块入口。
 - `ai-health-autoselect.js`：模块使用的定时检测脚本。
@@ -88,7 +88,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autose
 ## 使用步骤
 
 1. 导入 `Steve_WgetCloud_AI_Smart.conf`。
-2. 将配置中的 `输入你的订阅链接` 替换为自己的 Surge 订阅链接。
+2. 将 `AllServer` 策略组里的 `输入你的订阅链接` 替换为自己的 Surge 订阅链接。
 3. 确认配置里存在一个名为 `AI` 的 `select` 策略组。
 4. 在 Surge 中安装 `AI-Health-AutoSelect.sgmodule`。
 5. 启用模块并应用配置。
@@ -97,7 +97,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autose
 ### iOS 使用步骤
 
 1. 先在 iOS Surge 中导入并启用 `Steve_WgetCloud_AI_Smart.conf`。
-2. 将配置中的 `输入你的订阅链接` 替换为自己的订阅链接，或使用你已经在 Mac 上验证过的个人配置。
+2. 将 `AllServer` 策略组里的 `输入你的订阅链接` 替换为自己的订阅链接，或使用你已经在 Mac 上验证过的个人配置。
 3. 确认策略组里存在名为 `AI` 的 `select` 组，且里面能看到候选节点。
 4. 从 URL 安装 `AI-Health-AutoSelect-iOS.sgmodule`。
 5. 启用模块，保存并应用配置。
@@ -123,6 +123,7 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/ai-health-autose
 
 - 先逐个切换 `AI` 组里的候选节点。
 - 候选节点至少来自美国、日本、新加坡、台湾、英国、韩国这 6 个地区组。
+- `AI` 组会自动引用主订阅节点组 `AllServer`，不需要重复填写订阅链接。
 - 先访问 `http://chat.openai.com/cdn-cgi/trace`，读取 Cloudflare 判断出的出口地区 `loc`。
 - 如果地区不在 ChatGPT 支持列表内，直接跳过。
 - 再访问 `https://chatgpt.com/backend-api/models` 做真实可用性确认。
