@@ -170,6 +170,8 @@ Surge 原生 `url-test` 只判断是否收到 HTTP 响应，无法可靠区分 C
 - 将 AI 规则提前到广告/拒绝规则之前，避免远程 reject 规则误拦截 `events.statsigapi.net`、`bzr.openai.com` 等 OpenAI 依赖域名。
 - 补充 `chatgpt.com`、`oaistatic.com`、`oaiusercontent.com`、`auth0.com` 的 DNS 指定，降低依赖域名被本地/国内 DNS 解析干扰的概率。
 - 补齐 Claude、Gemini、Perplexity、Midjourney、Poe、OpenRouter、Grok、Meta AI、Dify、Jasper、Clipdrop、JetBrains AI、Hugging Face 等主流 AI 服务规则。
+- 优化规则顺序：修正规则提前到广告/拒绝规则之前；Apple Intelligence 和 Microsoft AI 提前到 AI 高优先级区。
+- 收窄 Gemini 规则，移除过宽的 `googleapis.com` 与 `google-analytics.com` 高优先级匹配，避免非 AI Google API 被误分流到 `AI`。
 - 增加 iOS 带版本号模块 `AI-Health-AutoSelect-iOS-v1.2.5.sgmodule`。
 
 ### v1.2.4
