@@ -1,4 +1,6 @@
 Steve_WgetCloud_AI_Smart.private.conf
+private/
+.env
 *.p12
 *.mobileconfig
 .DS_Store
