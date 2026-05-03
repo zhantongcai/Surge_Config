@@ -20,44 +20,6 @@ https://cdn.jsdelivr.net/gh/zhantongcai/Surge_Config@main/Steve_WgetCloud_AI_Sma
 
 注意：公开配置文件是脱敏模板，里面的订阅链接位置是 `输入你的订阅链接`。如果直接用这个地址自动更新，更新后仍然需要在本地替换成自己的订阅链接。不要把私人订阅链接提交到公开仓库。
 
-## 私用主配置自动更新
-
-如果你想让自己的 iOS/Mac Surge 自动更新完整配置，推荐使用 Surge Managed Profile：
-
-```ini
-#!MANAGED-CONFIG https://你的私用配置地址/Steve_WgetCloud_AI_Private.conf interval=21600 strict=false
-```
-
-注意：这是 Surge 客户端定时拉取，不是 GitHub 主动推送。`interval=21600` 表示最短每 6 小时检查一次。
-
-不要直接把真实订阅链接提交到公开仓库。本仓库提供本地生成器：
-
-```bash
-cp .env.example .env
-```
-
-编辑 `.env`：
-
-```bash
-SURGE_SUBSCRIPTION_URL=你的真实订阅链接
-SURGE_PRIVATE_PROFILE_URL=https://你的私用配置地址/Steve_WgetCloud_AI_Private.conf
-SURGE_MANAGED_INTERVAL=21600
-```
-
-生成私用配置：
-
-```bash
-bash scripts/build-private-profile.sh
-```
-
-生成文件在：
-
-```text
-private/Steve_WgetCloud_AI_Private.conf
-```
-
-`private/` 和 `.env` 已经被 `.gitignore` 忽略，不会上传到公开 GitHub。你只需要把生成后的私用配置上传到自己能访问的私有地址，再在 Surge Mac/iOS 里从 URL 导入。
-
 ### iOS 模块
 
 iOS 推荐安装带版本号的模块，避免 CDN 或 Surge 本地缓存继续使用旧模块：

@@ -42,52 +42,12 @@ https://raw.githubusercontent.com/zhantongcai/Surge_Config/main/AI-Health-AutoSe
 
 注意：公开配置文件是脱敏模板，订阅链接位置是 `输入你的订阅链接`。如果用公开配置做自动更新，本地私人订阅链接可能需要重新填入；不要把私人订阅链接提交到公开仓库。
 
-## 私用托管配置自动更新
-
-完整主配置建议使用 Surge Managed Profile 自动更新，而不是封装成模块。模块适合放 AI 检测、脚本、面板、MITM 或 Rewrite 补丁；完整配置应使用托管配置。
-
-本仓库提供一个本地生成器，用公开模板生成不进 Git 的私用配置：
-
-```bash
-cp .env.example .env
-```
-
-编辑 `.env`：
-
-```bash
-SURGE_SUBSCRIPTION_URL=你的真实订阅链接
-SURGE_PRIVATE_PROFILE_URL=https://你的私用配置地址/Steve_WgetCloud_AI_Private.conf
-SURGE_MANAGED_INTERVAL=21600
-```
-
-生成私用配置：
-
-```bash
-bash scripts/build-private-profile.sh
-```
-
-生成结果：
-
-```text
-private/Steve_WgetCloud_AI_Private.conf
-```
-
-`private/` 和 `.env` 已加入 `.gitignore`，不会提交到公开仓库。把生成后的私用配置上传到你自己的私有可访问地址，然后在 Surge Mac/iOS 里从 URL 导入该地址。配置第一行会自动带上：
-
-```ini
-#!MANAGED-CONFIG https://你的私用配置地址/Steve_WgetCloud_AI_Private.conf interval=21600 strict=false
-```
-
-`interval=21600` 表示最短每 6 小时检查一次更新。Surge 是客户端拉取更新，不是 GitHub 主动推送。
-
 ## 文件说明
 
 - `Steve_WgetCloud_AI_Smart.conf`：已脱敏的 Surge 配置模板。使用前只需要把 `AllServer` 里的 `输入你的订阅链接` 替换成自己的订阅链接。
 - `AI-Health-AutoSelect.sgmodule`：Surge Mac 模块入口。
 - `AI-Health-AutoSelect-iOS.sgmodule`：Surge iOS 专用模块入口。
 - `ai-health-autoselect.js`：模块使用的定时检测脚本。
-- `.env.example`：私用配置生成器示例环境文件。
-- `scripts/build-private-profile.sh`：根据公开模板生成本地私用 Managed Profile。
 
 ## 模块版本
 
